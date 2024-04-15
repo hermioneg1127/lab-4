@@ -27,10 +27,11 @@ def process_directory(input_directory, output_directory):
             image_matrix = convert_image_to_matrix(os.path.join(input_directory, file))
             save_matrix_to_file(image_matrix, os.path.join(output_directory, file + '.npy'))
 
-
+#just change the number of hte figs you want to convert, I can go back leter and automate this
 #should have all the images you want processed
-input_directory="/home/student/lab4/NISTGrayScaleImages/sd04/png_txt/figs_7"
+input_directory="../data/NISTGrayScaleImages/sd04/png_txt/figs_0"
 #where all the matrix files will be stored for later use
-output_directory="/home/student/lab4/NISTGrayScaleImages/sd04/matrix/figs_7"
+output_directory="../data/NISTGrayScaleImages/sd04/matrix/figs_0"
+
 
 process_directory(input_directory, output_directory)
