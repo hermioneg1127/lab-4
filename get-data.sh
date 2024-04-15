@@ -17,7 +17,7 @@ wget "$TORRENT_URL$TORRENT_NAME"
 
 # extract torrent (I use transmission on linux and macos, but qbit or utorrent are great as well... idk their cli tho)
 
-# this only needs to be ran if you're running this for the first time
+# the following only needs to be ran if you're running this for the first time
 # transmission-daemon
 # transmission-daemon --download-dir "$PWD/data"
 
