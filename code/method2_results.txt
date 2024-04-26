@@ -1,0 +1,6 @@
+THRESHOLD = 1100
+Number of correct accepts: 991/1000; ratio: 0.991
+Number of incorrect accepts: 9/1000; ratio: 0.009
+Number of correct rejects: 991/1000; ratio: 0.991
+Number of incorrect rejects: 9/1000; ratio: 0.009
+Thus, the false reject rate is 0.009 and the false accept rate is 0.009
