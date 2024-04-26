@@ -4,7 +4,7 @@ import random
 from PIL import Image, ImageChops, ImageStat
 import glob
 
-THRESHOLD = 0.1
+THRESHOLD = 0.075
 RESULTS = dict()
 
 def compare_images(imagef, images):
