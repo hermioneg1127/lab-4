@@ -75,6 +75,7 @@ def main():
             incorrect_reject += 1
         else: 
             correct_reject += 1
+        image.close()
     correct_accept = 1000 - incorrect_reject
     incorrect_accept = 1000 - correct_reject
     ratio_of_ca = correct_accept / 1000
