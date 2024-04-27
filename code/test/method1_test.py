@@ -10,7 +10,7 @@ RESULTS = dict()
 X = 6
 Y = 8
 HALF_FILES = 250
-THRESHOLD = 0.145
+THRESHOLD = 0.11
 
 
 def compare_images(imagef, images):

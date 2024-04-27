@@ -67,13 +67,13 @@ def caller(threshold):
                 attempts +=1
                 break
             else: 
+                attempts += 1
                 if attempts >= strain_length: #no more simages to compare against, so no good enough  match was found
                     filenumber = f_image.filename[-11:-7]
                     rejected.append(filenumber)
                     f_image.close()
                     number_trained += 1
                     break
-                attempts += 1
 
         
     correct_reject = 0
@@ -108,7 +108,7 @@ def threshold_search(depth):
     However, it would freeze on the second or third instance, so the binary search
     I was attempt to accomplish was instead done by hand (and a calculator). 
     """
-    thresh_l = 0.145
+    thresh_l = 0.11
     thresh_m = 0.175
     thresh_r = 0.2
 
