@@ -4,7 +4,9 @@ import glob
 from PIL import Image
 import random
 
-THRESHOLD = 1100
+HALF_FILES = 750
+X = 0
+Y = 6
 
 def mse(fimage, simage):
 	# the 'Mean Squared Error' between the two images is the
@@ -16,10 +18,13 @@ def mse(fimage, simage):
 	# the two images are
 	return err
 
-def main():
+
+
+
+def caller(threshold):
     ftrain = [] #initialize train list
     strain = []
-    for x in range (6): 
+    for x in range (X,Y): 
         """
         populate the train list with all training documents
         """
@@ -31,21 +36,13 @@ def main():
                 image = Image.open(file)
                 ftrain.append(image)
             elif filename[0] == "s":
-                if len(strain) < 1000:
+                if len(strain) < HALF_FILES:
                     image = Image.open(file)
                     strain.append(image)
-    for x in range (6,8):
-        """
-        populate the test list with all training documents
-        """
-        filepath = "../lab-4/data/NISTSpecialDatabase4GrayScaleImagesofFIGS/sd04/png_txt/figs_" + str(x) + "/f*.png"
-        images = glob.glob(filepath)
-        for file in images:
-            image = Image.open(file)
-            ftrain.append(image)
 
     ## Begin processing the train images ##
     random.shuffle(strain)
+    random.shuffle(ftrain)
     number_trained = 0
     ftrain_length = len(ftrain)
     while number_trained < ftrain_length:
@@ -57,7 +54,9 @@ def main():
             s_image = strain[attempts]
             s_image_conv = skimage.img_as_float(s_image)
             comparison_value = mse(f_image_conv,s_image_conv)
-            if comparison_value < THRESHOLD:
+            number_s = (s_image.filename[-11:-4])
+            number_f = (f_image.filename[-11:-4])
+            if comparison_value < threshold:
                 strain.pop(attempts)
                 number_trained += 1
                 break
@@ -74,23 +73,77 @@ def main():
     incorrect_reject = 0
 
     for image in strain:
-        filenumber = int(image.filename[-11:-4])
-        if filenumber <= 1000:
+        filenumber = int(image.filename[-11:-7])
+        if filenumber <= HALF_FILES:
             incorrect_reject += 1
         else: 
             correct_reject += 1
-    correct_accept = 1000 - incorrect_reject
-    incorrect_accept = 1000 - correct_reject
-    ratio_of_ca = correct_accept / 1000
-    ratio_of_ia = incorrect_accept / 1000
-    ratio_of_cr = correct_reject / 1000
-    ratio_of_ir = incorrect_reject / 1000
-    print("Number of correct accepts: " + str(correct_accept) + "/1000; ratio: " + str(ratio_of_ca))
-    print("Number of incorrect accepts: " + str(incorrect_accept) + "/1000; ratio: " + str(ratio_of_ia))
-    print("Number of correct rejects: " + str(correct_reject) + "/1000; ratio: " + str(ratio_of_cr))
-    print("Number of incorrect rejects: " + str(incorrect_reject) + "/1000; ratio: " + str(ratio_of_ir))
+        image.close()
+    correct_accept = HALF_FILES - incorrect_reject
+    incorrect_accept = HALF_FILES - correct_reject
+    ratio_of_ca = correct_accept / HALF_FILES
+    ratio_of_ia = incorrect_accept / HALF_FILES
+    ratio_of_cr = correct_reject / HALF_FILES
+    ratio_of_ir = incorrect_reject / HALF_FILES
+    print("Number of correct accepts: " + str(correct_accept) + "/750; ratio: " + str(ratio_of_ca))
+    print("Number of incorrect accepts: " + str(incorrect_accept) + "/750; ratio: " + str(ratio_of_ia))
+    print("Number of correct rejects: " + str(correct_reject) + "/750; ratio: " + str(ratio_of_cr))
+    print("Number of incorrect rejects: " + str(incorrect_reject) + "/750; ratio: " + str(ratio_of_ir))
     print("Thus, the false reject rate is " + str(ratio_of_ir) + " and the false accept rate is " + str(ratio_of_ia))
+    return ratio_of_ir, ratio_of_ia
 
+def threshold_search(depth):
+    thresh_l = 1000
+    thresh_m = 1250
+    thresh_r = 1500
+
+    thresh = [thresh_l, thresh_m, thresh_r]
+    l_frr = 0
+    l_far = 0 
+    m_frr = 0 
+    m_far = 0
+    r_frr = 0
+    r_far = 0
+    for i in range(depth):
+        print("################ DEPTH " + str(i) + " ################")
+        left_worse = True
+        if i == 0:
+            l_frr, l_far = caller(thresh_l)
+            print("Threshold: " + str(thresh_l) + "; l_frr: " + str(l_frr) + "; l_far" + str(l_far))
+            r_frr, r_far = caller(thresh_r)
+            print("Threshold: " + str(thresh_r) + "; r_frr: " + str(r_frr) + "; r_far" + str(r_far))
+            m_frr, m_far = caller(thresh_m)
+            print("Threshold: " + str(thresh_m) + "; m_frr: " + str(m_frr) + "; m_far" + str(m_far))
+        elif left_worse == False:
+            r_frr, r_far = caller(thresh_r)
+            print("Threshold: " + str(thresh_r) + "; r_frr: " + str(r_frr) + "; r_far" + str(r_far))
+        elif left_worse == True:
+            l_frr, l_far = caller(thresh_l)    
+            print("Threshold: " + str(thresh_m) + "; l_frr: " + str(l_frr) + "; l_far" + str(l_far))       
+
+        diff_r = abs(r_frr - r_far)
+        diff_l = abs(l_frr - l_far)
+        diff_m = abs(m_frr - m_far)
+        if diff_r == 0:
+            print("Best threshold: " + thresh_r)
+            break
+        elif diff_l == 0: 
+            print("Best threshold: " + thresh_l)
+            break
+        elif diff_m == 0: 
+            print("Best threshold: " + thresh_m)
+            break
+        if diff_r > diff_l:
+            left_worse = False
+        if left_worse:
+            thresh_l = thresh_m
+            l_frr = m_frr
+            l_far = m_far
+        else:
+            thresh_r = thresh_m
+            r_frr = m_frr
+            r_far = m_far
+        thresh_m = thresh_l + thresh_r / 2
 
 
 
@@ -98,6 +151,10 @@ def main():
     #     compare_images(imagef, images)
 
     # return
+
+def main():
+    threshold_search(6)
+
 
 if __name__ == "__main__":
     main()

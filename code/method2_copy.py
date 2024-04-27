@@ -1,13 +1,27 @@
-from skimage.metrics import structural_similarity
-import glob
-import random
-import skimage
-from PIL import Image
+#### This is for method 1 ####
 
-THRESHOLD = .8
-HALF_FILES = 750
+import random
+from PIL import Image, ImageChops, ImageStat
+import glob
+import numpy
+import skimage
+
+RESULTS = dict()
 X = 0
 Y = 6
+HALF_FILES = 750
+
+
+def mse(fimage, simage):
+	# the 'Mean Squared Error' between the two images is the
+	# sum of the squared difference between the two images;
+	err = numpy.sum((fimage.astype("float") - simage.astype("float")) ** 2)
+	mean = err / float(fimage.shape[0] * simage.shape[1])
+	
+	# return the MSE, the lower the error, the more "similar"
+	# the two images are
+	return err
+
 
 def caller(threshold):
     ftrain = [] #initialize train list
@@ -31,6 +45,7 @@ def caller(threshold):
                     image = Image.open(file)
                     strain.append(image)
 
+    ## Begin processing the train images ##
     random.shuffle(strain)
     number_trained = 0
     ftrain_length = len(ftrain)
@@ -42,9 +57,10 @@ def caller(threshold):
         while attempts < strain_length:
             s_image = strain[attempts]
             s_image_conv = skimage.img_as_float(s_image)
-            comparison_value = comparison_value = structural_similarity(f_image_conv,s_image_conv)
-            if comparison_value >= threshold:
-                s_image.close()
+            comparison_value = mse(f_image_conv,s_image_conv)
+            if comparison_value < threshold:
+                # strain.pop(attempts)
+                #s_image.close()
                 f_image.close()
                 number_trained += 1
                 attempts +=1
@@ -60,7 +76,6 @@ def caller(threshold):
     correct_reject = 0
     incorrect_reject = 0
 
-    incorrect_reject = len(strain)
     for image in strain:
         image.close()
     for image in rejected:
@@ -83,7 +98,7 @@ def caller(threshold):
     print("Thus, the false reject rate is " + str(ratio_of_ir) + " and the false accept rate is " + str(ratio_of_ia))
     return ratio_of_ir, ratio_of_ia
 def threshold_search(depth):
-    thresh_l = 9200
+    thresh_l = 5000
     thresh_m = 0.175
     thresh_r = 0.2
 
@@ -99,7 +114,7 @@ def threshold_search(depth):
     left_worse = True
     # if i == 0:
     l_frr, l_far = caller(thresh_l)
-    print("Threshold: " + str(thresh_l) + "; l_frr: " + str(l_frr) + "; l_far: " + str(l_far))
+    print("Threshold: " + str(thresh_l) + "; l_frr: " + str(l_frr) + "; l_far" + str(l_far))
         #     r_frr, r_far = caller(thresh_r)
         #     print("Threshold: " + str(thresh_r) + "; r_frr: " + str(r_frr) + "; r_far" + str(r_far))
         #     m_frr, m_far = caller(thresh_m)
@@ -160,93 +175,3 @@ if __name__ == "__main__":
 #### All f images will be added to f_train
 #### Only the first 1,000 s train images will be added to s_train.
 #### This is to ensure validation is working properly by having some fingerprints that should authenticat successfully and some finger prints that should not authenticate successfully.
-
-
-
-
-
-# def main():
-#     ftrain = [] #initialize train list
-#     strain = []
-#     for x in range (6): 
-#         """
-#         populate the train list with all training documents
-#         """
-#         filepath = "../lab-4/data/NISTSpecialDatabase4GrayScaleImagesofFIGS/sd04/png_txt/figs_" + str(x) + "/*.png"
-#         images = glob.glob(filepath)
-#         for file in images:
-#             filename = file[-12:]
-#             if filename[0] == "f":
-#                 image = Image.open(file)
-#                 ftrain.append(image)
-#             elif filename[0] == "s":
-#                 if len(strain) < 1000:
-#                     image = Image.open(file)
-#                     strain.append(image)
-#     for x in range (6,8):
-#         """
-#         populate the test list with all training documents
-#         """
-#         filepath = "../lab-4/data/NISTSpecialDatabase4GrayScaleImagesofFIGS/sd04/png_txt/figs_" + str(x) + "/f*.png"
-#         images = glob.glob(filepath)
-#         for file in images:
-#             image = Image.open(file)
-#             ftrain.append(image)
-
-#     ## Begin processing the train images ##
-#     random.shuffle(strain)
-#     number_trained = 0
-#     ftrain_length = len(ftrain)
-#     while number_trained < ftrain_length:
-#         f_image = ftrain[number_trained]
-#         f_image_conv = skimage.img_as_float(f_image)
-#         strain_length = len(strain)
-#         attempts = 0
-#         while attempts < strain_length:
-#             s_image = strain[attempts]
-#             s_image_conv = skimage.img_as_float(s_image)
-#             comparison_value = structural_similarity(f_image_conv,s_image_conv)
-#             if comparison_value >= THRESHOLD:
-#                 strain.pop(attempts)
-#                 number_trained += 1
-#                 break
-#             else: 
-#                 attempts += 1
-#                 if attempts >= strain_length:
-#                     number_trained += 1
-#                     break
-
-        
-#     correct_accept = 0
-#     correct_reject = 0
-#     incorrect_accept = 0
-#     incorrect_reject = 0
-
-#     for image in strain:
-#         filenumber = int(image.filename[-11:-4])
-#         if filenumber <= 1000:
-#             incorrect_reject += 1
-#         else: 
-#             correct_reject += 1
-#     correct_accept = 1000 - incorrect_reject
-#     incorrect_accept = 1000 - correct_reject
-#     ratio_of_ca = correct_accept / 1000
-#     ratio_of_ia = incorrect_accept / 1000
-#     ratio_of_cr = correct_reject / 1000
-#     ratio_of_ir = incorrect_reject / 1000
-#     print("Number of correct accepts: " + str(correct_accept) + "/1000; ratio: " + str(ratio_of_ca))
-#     print("Number of incorrect accepts: " + str(incorrect_accept) + "/1000; ratio: " + str(ratio_of_ia))
-#     print("Number of correct rejects: " + str(correct_reject) + "/1000; ratio: " + str(ratio_of_cr))
-#     print("Number of incorrect rejects: " + str(incorrect_reject) + "/1000; ratio: " + str(ratio_of_ir))
-#     print("Thus, the false reject rate is " + str(ratio_of_ir) + " and the false accept rate is " + str(ratio_of_ia))
-
-
-
-
-#     # for x in range (1500):
-#     #     compare_images(imagef, images)
-
-#     # return
-
-# if __name__ == "__main__":
-#     main()
