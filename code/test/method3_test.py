@@ -7,7 +7,6 @@ from PIL import Image
 THRESHOLD = 0.225
 HALF_SIZE = 250
 HALF_FILES = 1750
-THRESHOLD = .0273
 X = 6
 Y = 8
 
@@ -63,11 +62,10 @@ def caller():
     correct_reject = 0
     incorrect_reject = 0
 
-    incorrect_reject = len(strain)
     for image in strain:
         image.close()
     for image in rejected:
-        filenumber = int(image.filename[-11:-7])
+        filenumber = int(image)
         image.close()
         if filenumber > HALF_FILES:
             correct_reject += 1
