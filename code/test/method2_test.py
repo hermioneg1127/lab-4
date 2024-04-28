@@ -11,7 +11,7 @@ X = 6
 Y = 8
 HALF_SIZE = 250
 HALF_FILES = 1750
-THRESHOLD = .0273
+THRESHOLD = .02822
 
 
 def mse(fimage, simage):
@@ -43,7 +43,7 @@ def caller():
                 image = Image.open(file)
                 ftrain.append(image)
             elif filename[0] == "s":
-                if len(strain) < HALF_FILES:
+                if len(strain) < HALF_SIZE:
                     image = Image.open(file)
                     strain.append(image)
 

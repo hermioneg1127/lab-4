@@ -5,7 +5,9 @@ import skimage
 from PIL import Image
 
 THRESHOLD = 0.225
-HALF_FILES = 250
+HALF_SIZE = 250
+HALF_FILES = 1750
+THRESHOLD = .0273
 X = 6
 Y = 8
 
@@ -27,7 +29,7 @@ def caller():
                 image = Image.open(file)
                 ftrain.append(image)
             elif filename[0] == "s":
-                if len(strain) < HALF_FILES:
+                if len(strain) < HALF_SIZE:
                     image = Image.open(file)
                     strain.append(image)
 
@@ -42,17 +44,18 @@ def caller():
         while attempts < strain_length:
             s_image = strain[attempts]
             s_image_conv = skimage.img_as_float(s_image)
-            comparison_value = comparison_value = structural_similarity(f_image_conv,s_image_conv)
+            comparison_value = comparison_value = structural_similarity(f_image_conv,s_image_conv,data_range=1)
             if comparison_value >= THRESHOLD:
-                s_image.close()
                 f_image.close()
                 number_trained += 1
                 attempts +=1
                 break
             else: 
                 attempts += 1
-                if attempts >= strain_length:
-                    rejected.append(f_image)
+                if attempts >= strain_length: #no more simages to compare against, so no good enough  match was found
+                    filenumber = f_image.filename[-11:-7]
+                    rejected.append(filenumber)
+                    f_image.close()
                     number_trained += 1
                     break
 
@@ -70,12 +73,12 @@ def caller():
             correct_reject += 1
         elif filenumber <= HALF_FILES:
             incorrect_reject += 1
-    incorrect_accept = HALF_FILES - correct_reject
-    correct_accept = HALF_FILES - incorrect_reject
-    ratio_of_ca = correct_accept / HALF_FILES
-    ratio_of_ia = incorrect_accept / HALF_FILES
-    ratio_of_cr = correct_reject / HALF_FILES
-    ratio_of_ir = incorrect_reject / HALF_FILES
+    incorrect_accept = HALF_SIZE - correct_reject
+    correct_accept = HALF_SIZE - incorrect_reject
+    ratio_of_ca = correct_accept / HALF_SIZE
+    ratio_of_ia = incorrect_accept / HALF_SIZE
+    ratio_of_cr = correct_reject / HALF_SIZE
+    ratio_of_ir = incorrect_reject / HALF_SIZE
     print("Number of correct accepts: " + str(correct_accept) + "/250; ratio: " + str(ratio_of_ca))
     print("Number of incorrect accepts: " + str(incorrect_accept) + "/250; ratio: " + str(ratio_of_ia))
     print("Number of correct rejects: " + str(correct_reject) + "/250; ratio: " + str(ratio_of_cr))
