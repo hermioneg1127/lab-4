@@ -4,10 +4,10 @@ import random
 import skimage
 from PIL import Image
 
-THRESHOLD = .8
-HALF_FILES = 250
+THRESHOLD = .225
+HALF_FILES = 750
 X = 0
-Y = 2
+Y = 6
 
 def caller(threshold):
     ftrain = [] #initialize train list
@@ -75,10 +75,10 @@ def caller(threshold):
     ratio_of_ia = incorrect_accept / HALF_FILES
     ratio_of_cr = correct_reject / HALF_FILES
     ratio_of_ir = incorrect_reject / HALF_FILES
-    print("Number of correct accepts: " + str(correct_accept) + "/250; ratio: " + str(ratio_of_ca))
-    print("Number of incorrect accepts: " + str(incorrect_accept) + "/250; ratio: " + str(ratio_of_ia))
-    print("Number of correct rejects: " + str(correct_reject) + "/250; ratio: " + str(ratio_of_cr))
-    print("Number of incorrect rejects: " + str(incorrect_reject) + "/250; ratio: " + str(ratio_of_ir))
+    print("Number of correct accepts: " + str(correct_accept) + "/750; ratio: " + str(ratio_of_ca))
+    print("Number of incorrect accepts: " + str(incorrect_accept) + "/750; ratio: " + str(ratio_of_ia))
+    print("Number of correct rejects: " + str(correct_reject) + "750; ratio: " + str(ratio_of_cr))
+    print("Number of incorrect rejects: " + str(incorrect_reject) + "/750; ratio: " + str(ratio_of_ir))
     print("Thus, the false reject rate is " + str(ratio_of_ir) + " and the false accept rate is " + str(ratio_of_ia))
     return ratio_of_ir, ratio_of_ia
 def threshold_search(depth):

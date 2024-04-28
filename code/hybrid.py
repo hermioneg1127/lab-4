@@ -11,7 +11,7 @@ X = 6
 Y = 8
 HALF_FILES = 1750
 HALF_SIZE = 250
-mse_threshold = 7147
+mse_threshold = 0.0272
 compare_threshold = 0.1261
 ssim_threshold = 0.225
 

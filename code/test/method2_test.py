@@ -11,7 +11,7 @@ X = 6
 Y = 8
 HALF_SIZE = 250
 HALF_FILES = 1750
-THRESHOLD = 7147
+THRESHOLD = .0273
 
 
 def mse(fimage, simage):
@@ -97,7 +97,7 @@ def caller():
     print("Number of incorrect accepts: " + str(incorrect_accept) + "/250; ratio: " + str(ratio_of_ia))
     print("Number of correct rejects: " + str(correct_reject) + "/250; ratio: " + str(ratio_of_cr))
     print("Number of incorrect rejects: " + str(incorrect_reject) + "/250; ratio: " + str(ratio_of_ir))
-    print("Thus, the false reject rate is " + str(ratio_of_ir) + " and the false accept rate is " + str(ratio_of_ia))
+    print("Thus, the false reject rate is " + str(ratio_of_ir) + " and the false accept rate is " + str(ratio_of_ia) + " when threshold is " + str(THRESHOLD))
     return ratio_of_ir, ratio_of_ia
 
 def main():

@@ -4,8 +4,8 @@ import random
 import skimage
 from PIL import Image
 
-THRESHOLD = ""
-HALF_FILES = 750
+THRESHOLD = 0.225
+HALF_FILES = 250
 X = 6
 Y = 8
 
@@ -76,11 +76,11 @@ def caller():
     ratio_of_ia = incorrect_accept / HALF_FILES
     ratio_of_cr = correct_reject / HALF_FILES
     ratio_of_ir = incorrect_reject / HALF_FILES
-    print("Number of correct accepts: " + str(correct_accept) + "/750; ratio: " + str(ratio_of_ca))
-    print("Number of incorrect accepts: " + str(incorrect_accept) + "/750; ratio: " + str(ratio_of_ia))
-    print("Number of correct rejects: " + str(correct_reject) + "/750; ratio: " + str(ratio_of_cr))
-    print("Number of incorrect rejects: " + str(incorrect_reject) + "/750; ratio: " + str(ratio_of_ir))
-    print("Thus, the false reject rate is " + str(ratio_of_ir) + " and the false accept rate is " + str(ratio_of_ia))
+    print("Number of correct accepts: " + str(correct_accept) + "/250; ratio: " + str(ratio_of_ca))
+    print("Number of incorrect accepts: " + str(incorrect_accept) + "/250; ratio: " + str(ratio_of_ia))
+    print("Number of correct rejects: " + str(correct_reject) + "/250; ratio: " + str(ratio_of_cr))
+    print("Number of incorrect rejects: " + str(incorrect_reject) + "/250; ratio: " + str(ratio_of_ir))
+    print("Thus, the false reject rate is " + str(ratio_of_ir) + " and the false accept rate is " + str(ratio_of_ia) + " when threshold is " + str(THRESHOLD))
     return ratio_of_ir, ratio_of_ia
 
 
