@@ -53,11 +53,11 @@ def caller(threshold):
         f_image = ftrain[number_trained]
         strain_length = len(strain)
         attempts = 0
-        f_image_conv = skimage.img_as_float(f_image)
+        f_image_conv = skimage.img_as_float(f_image) #Ensure you convert before sending into the method
         while attempts < strain_length:
             s_image = strain[attempts]
-            s_image_conv = skimage.img_as_float(s_image)
-            comparison_value = mse(f_image_conv,s_image_conv)
+            s_image_conv = skimage.img_as_float(s_image) #Ensure you convert before sending into the method
+            comparison_value = mse(f_image_conv,s_image_conv) #The method call
             if comparison_value < threshold:
                 # strain.pop(attempts)
                 #s_image.close()
@@ -98,7 +98,7 @@ def caller(threshold):
     print("Thus, the false reject rate is " + str(ratio_of_ir) + " and the false accept rate is " + str(ratio_of_ia))
     return ratio_of_ir, ratio_of_ia
 def threshold_search(depth):
-    thresh_l = 7500
+    thresh_l = 6692
     thresh_m = 0.175
     thresh_r = 0.2
 

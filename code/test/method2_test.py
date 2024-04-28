@@ -9,8 +9,9 @@ import skimage
 RESULTS = dict()
 X = 6
 Y = 8
-HALF_FILES = 250
-THRESHOLD = ""
+HALF_SIZE = 250
+HALF_FILES = 1750
+THRESHOLD = 7147
 
 
 def mse(fimage, simage):
@@ -86,12 +87,12 @@ def caller():
             correct_reject += 1
         elif filenumber <= HALF_FILES:
             incorrect_reject += 1
-    incorrect_accept = HALF_FILES - correct_reject
-    correct_accept = HALF_FILES - incorrect_reject
-    ratio_of_ca = correct_accept / HALF_FILES
-    ratio_of_ia = incorrect_accept / HALF_FILES
-    ratio_of_cr = correct_reject / HALF_FILES
-    ratio_of_ir = incorrect_reject / HALF_FILES
+    incorrect_accept = HALF_SIZE - correct_reject
+    correct_accept = HALF_SIZE - incorrect_reject
+    ratio_of_ca = correct_accept / HALF_SIZE
+    ratio_of_ia = incorrect_accept / HALF_SIZE
+    ratio_of_cr = correct_reject / HALF_SIZE
+    ratio_of_ir = incorrect_reject / HALF_SIZE
     print("Number of correct accepts: " + str(correct_accept) + "/250; ratio: " + str(ratio_of_ca))
     print("Number of incorrect accepts: " + str(incorrect_accept) + "/250; ratio: " + str(ratio_of_ia))
     print("Number of correct rejects: " + str(correct_reject) + "/250; ratio: " + str(ratio_of_cr))
