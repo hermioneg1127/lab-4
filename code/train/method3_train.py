@@ -5,9 +5,9 @@ import skimage
 from PIL import Image
 
 THRESHOLD = .8
-HALF_FILES = 750
+HALF_FILES = 250
 X = 0
-Y = 6
+Y = 2
 
 def caller(threshold):
     ftrain = [] #initialize train list
@@ -42,9 +42,8 @@ def caller(threshold):
         while attempts < strain_length:
             s_image = strain[attempts]
             s_image_conv = skimage.img_as_float(s_image)
-            comparison_value = comparison_value = structural_similarity(f_image_conv,s_image_conv)
+            comparison_value = structural_similarity(f_image_conv,s_image_conv, data_range=1)
             if comparison_value >= threshold:
-                s_image.close()
                 f_image.close()
                 number_trained += 1
                 attempts +=1
@@ -52,7 +51,9 @@ def caller(threshold):
             else: 
                 attempts += 1
                 if attempts >= strain_length:
-                    rejected.append(f_image)
+                    filenumber = f_image.filename[-11:-7]
+                    rejected.append(filenumber)
+                    f_image.close()
                     number_trained += 1
                     break
 
@@ -60,12 +61,10 @@ def caller(threshold):
     correct_reject = 0
     incorrect_reject = 0
 
-    incorrect_reject = len(strain)
     for image in strain:
         image.close()
     for image in rejected:
-        filenumber = int(image.filename[-11:-7])
-        image.close()
+        filenumber = int(image)
         if filenumber > HALF_FILES:
             correct_reject += 1
         elif filenumber <= HALF_FILES:
@@ -76,14 +75,14 @@ def caller(threshold):
     ratio_of_ia = incorrect_accept / HALF_FILES
     ratio_of_cr = correct_reject / HALF_FILES
     ratio_of_ir = incorrect_reject / HALF_FILES
-    print("Number of correct accepts: " + str(correct_accept) + "/750; ratio: " + str(ratio_of_ca))
-    print("Number of incorrect accepts: " + str(incorrect_accept) + "/750; ratio: " + str(ratio_of_ia))
-    print("Number of correct rejects: " + str(correct_reject) + "/750; ratio: " + str(ratio_of_cr))
-    print("Number of incorrect rejects: " + str(incorrect_reject) + "/750; ratio: " + str(ratio_of_ir))
+    print("Number of correct accepts: " + str(correct_accept) + "/250; ratio: " + str(ratio_of_ca))
+    print("Number of incorrect accepts: " + str(incorrect_accept) + "/250; ratio: " + str(ratio_of_ia))
+    print("Number of correct rejects: " + str(correct_reject) + "/250; ratio: " + str(ratio_of_cr))
+    print("Number of incorrect rejects: " + str(incorrect_reject) + "/250; ratio: " + str(ratio_of_ir))
     print("Thus, the false reject rate is " + str(ratio_of_ir) + " and the false accept rate is " + str(ratio_of_ia))
     return ratio_of_ir, ratio_of_ia
 def threshold_search(depth):
-    thresh_l = 9200
+    thresh_l = 0.225
     thresh_m = 0.175
     thresh_r = 0.2
 

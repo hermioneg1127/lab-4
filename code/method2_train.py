@@ -20,7 +20,7 @@ def mse(fimage, simage):
 	
 	# return the MSE, the lower the error, the more "similar"
 	# the two images are
-	return err
+	return mean
 
 
 def caller(threshold):
