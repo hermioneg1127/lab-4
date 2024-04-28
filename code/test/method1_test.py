@@ -1,7 +1,7 @@
 #### This is testing phase of method one now that the mathematically best threshold was found
 #### The method utilizes ImageChops.difference, an image processing method to determine how similar two images are to each other
 #### The smaller the number, the better ####
-#### The best threshold determined was 0.145
+#### The best threshold determined was 0.12
 import random
 from PIL import Image, ImageChops, ImageStat
 import glob
@@ -9,8 +9,10 @@ import glob
 RESULTS = dict()
 X = 6
 Y = 8
-HALF_FILES = 250
-THRESHOLD = 0.11
+HALF_FILES = 1750
+HALF_SIZE = 250
+THRESHOLD = 0.1261
+
 
 
 def compare_images(imagef, images):
@@ -46,7 +48,7 @@ def caller():
                 image = Image.open(file)
                 ftrain.append(image)
             elif filename[0] == "s": #checking to see if a subject image
-                if len(strain) < HALF_FILES: #so there can be correct rejects and correct accepts, only half of the images will be in the database.
+                if len(strain) < HALF_SIZE: #so there can be correct rejects and correct accepts, only half of the images will be in the database.
                     image = Image.open(file)
                     strain.append(image)
 
@@ -63,8 +65,6 @@ def caller():
             s_image = strain[attempts] 
             comparison_value = compare_images(f_image,s_image) #compare the ftrain image with the strain image
             if comparison_value < THRESHOLD: # if similar enough, pop the strain value, close the images, and correct_accept += 1
-                strain.pop(attempts)
-                s_image.close()
                 f_image.close()
                 number_trained += 1
                 attempts +=1
@@ -72,7 +72,9 @@ def caller():
             else: 
                 attempts += 1
                 if attempts >= strain_length: #no more simages to compare against, so no good enough  match was found
-                    rejected.append(f_image)
+                    filenumber = f_image.filename[-11:-7]
+                    rejected.append(filenumber)
+                    f_image.close()
                     number_trained += 1
                     break
 
@@ -84,22 +86,21 @@ def caller():
     for image in strain:
         image.close()
     for image in rejected:
-        filenumber = int(image.filename[-11:-7])
-        image.close()
+        filenumber = int(image)
         if filenumber > HALF_FILES:
             correct_reject += 1
         if filenumber <= HALF_FILES:
             incorrect_reject += 1
-    incorrect_accept = HALF_FILES - correct_reject
-    correct_accept = HALF_FILES - incorrect_reject
-    ratio_of_ca = correct_accept / HALF_FILES
-    ratio_of_ia = incorrect_accept / HALF_FILES
-    ratio_of_cr = correct_reject / HALF_FILES
-    ratio_of_ir = incorrect_reject / HALF_FILES
-    print("Number of correct accepts: " + str(correct_accept) + "/750; ratio: " + str(ratio_of_ca))
-    print("Number of incorrect accepts: " + str(incorrect_accept) + "/750; ratio: " + str(ratio_of_ia))
-    print("Number of correct rejects: " + str(correct_reject) + "/750; ratio: " + str(ratio_of_cr))
-    print("Number of incorrect rejects: " + str(incorrect_reject) + "/750; ratio: " + str(ratio_of_ir))
+    incorrect_accept = HALF_SIZE - correct_reject
+    correct_accept = HALF_SIZE - incorrect_reject
+    ratio_of_ca = correct_accept / HALF_SIZE
+    ratio_of_ia = incorrect_accept / HALF_SIZE
+    ratio_of_cr = correct_reject / HALF_SIZE
+    ratio_of_ir = incorrect_reject / HALF_SIZE
+    print("Number of correct accepts: " + str(correct_accept) + "/250; ratio: " + str(ratio_of_ca))
+    print("Number of incorrect accepts: " + str(incorrect_accept) + "/250; ratio: " + str(ratio_of_ia))
+    print("Number of correct rejects: " + str(correct_reject) + "/250; ratio: " + str(ratio_of_cr))
+    print("Number of incorrect rejects: " + str(incorrect_reject) + "/250; ratio: " + str(ratio_of_ir))
     print("Thus, the false reject rate is " + str(ratio_of_ir) + " and the false accept rate is " + str(ratio_of_ia))
     return ratio_of_ir, ratio_of_ia
 

@@ -98,7 +98,7 @@ def caller(threshold):
     print("Thus, the false reject rate is " + str(ratio_of_ir) + " and the false accept rate is " + str(ratio_of_ia))
     return ratio_of_ir, ratio_of_ia
 def threshold_search(depth):
-    thresh_l = 5000
+    thresh_l = 7500
     thresh_m = 0.175
     thresh_r = 0.2
 

@@ -108,7 +108,7 @@ def threshold_search(depth):
     However, it would freeze on the second or third instance, so the binary search
     I was attempt to accomplish was instead done by hand (and a calculator). 
     """
-    thresh_l = 0.11
+    thresh_l = 0.12
     thresh_m = 0.175
     thresh_r = 0.2
 
