@@ -4,7 +4,7 @@ import random
 import skimage
 from PIL import Image
 
-THRESHOLD = 0.225
+THRESHOLD = 0.218
 HALF_SIZE = 250
 HALF_FILES = 1750
 X = 6
@@ -66,7 +66,7 @@ def caller():
         image.close()
     for image in rejected:
         filenumber = int(image)
-        image.close()
+
         if filenumber > HALF_FILES:
             correct_reject += 1
         elif filenumber <= HALF_FILES:

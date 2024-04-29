@@ -13,7 +13,7 @@ HALF_FILES = 1750
 HALF_SIZE = 250
 mse_threshold = 0.0272
 compare_threshold = 0.1261
-ssim_threshold = 0.225
+ssim_threshold = 0.2185
 
 
 def compare_images(imagef, images):
@@ -26,22 +26,23 @@ def compare_images(imagef, images):
     ratio = sum(stat.mean) / (len(stat.mean) * 255)
     if ratio < compare_threshold:
         return 1
-    else:
-        return 0
+    return 0
 
 def mse(fimage, simage):
 	# the 'Mean Squared Error' between the two images is the
 	# sum of the squared difference between the two images;
-	err = numpy.sum((fimage.astype("float") - simage.astype("float")) ** 2)
-	mean = err / float(fimage.shape[0] * simage.shape[1])
-	
-	# return the MSE, the lower the error, the more "similar"
-	# the two images are
-	return mean
+    err = numpy.sum((fimage.astype("float") - simage.astype("float")) ** 2)
+    mean = err / float(fimage.shape[0] * simage.shape[1])
+    if mean < mse_threshold:
+        return 1
+    return 0
+    
 
 def ssim(f_image, s_image):
     value = structural_similarity(f_image,s_image, data_range=1)
-    return value
+    if value > ssim_threshold:
+        return 1
+    return 0
 
 def caller():
     """
@@ -65,7 +66,7 @@ def caller():
                 image = Image.open(file)
                 ftrain.append(image)
             elif filename[0] == "s": #checking to see if a subject image
-                if len(strain) < HALF_FILES: #so there can be correct rejects and correct accepts, only half of the images will be in the database.
+                if len(strain) < HALF_SIZE: #so there can be correct rejects and correct accepts, only half of the images will be in the database.
                     image = Image.open(file)
                     strain.append(image)
 
